@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Batch {
+  id               String        @id @default(cuid())
+  title            String
+  uploadedAt       DateTime      @default(now())
+  source           String
+  originalFilename String
+  filePath         String
+  recordCount      Int
+  measurements     Measurement[]
+}
+
+model Measurement {
+  id                String  @id @default(cuid())
+  batchId           String
+  batch             Batch   @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  sessionId         String?
+  nama              String?
+  tanggalLahir      String?
+  umurBulan         Float?
+  gender            String?
+  kategoriTinggi    String?
+  tinggiCm          Float?
+  beratKg           Float?
+  suhuC             Float?
+  hrBpm             Int?
+  spo2Pct           Float?
+  fsRedirHz         Float?
+  fsGreenHz         Float?
+  fsResampleHz      Int?
+  fsKualitasOk      Boolean?
+  durasiKualitasOk  Boolean?
+  nSamplePpg        Int?
+  glukosaMgdl       Float?
+  glukosaStatus     String?
+
+  @@index([batchId])
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}

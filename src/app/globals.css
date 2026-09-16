@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f2f8ff;
+  --foreground: #0f2547;
+  --font-sans: "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+    ui-sans-serif, system-ui, sans-serif;
+}
+
+* {
+  border-color: theme("colors.sky.100");
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  color: var(--foreground);
+  background-color: var(--background);
+  background-image:
+    radial-gradient(1200px 600px at 10% -10%, #ffffff 0%, rgba(255, 255, 255, 0) 60%),
+    radial-gradient(900px 500px at 90% 0%, #dbeafe 0%, rgba(219, 234, 254, 0) 55%),
+    linear-gradient(180deg, #eaf4ff 0%, #f6fbff 45%, #ffffff 100%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .card-cloud {
+    @apply rounded-2xl border border-sky-100 bg-white/90 shadow-sm backdrop-blur transition;
+  }
+
+  .card-cloud-hover {
+    @apply hover:-translate-y-1 hover:border-sky-200 hover:shadow-cloud;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-sky-200 bg-white px-4 py-2.5 text-sm font-semibold text-blue-800 shadow-sm transition hover:bg-sky-50 focus:outline-none focus:ring-2 focus:ring-blue-200;
+  }
+
+  .input-cloud {
+    @apply w-full rounded-xl border border-sky-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-200;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
+  }
+}
+
+::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #bfdbfe;
+  border-radius: 9999px;
+}

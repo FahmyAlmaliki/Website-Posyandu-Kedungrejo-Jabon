@@ -1,0 +1,16 @@
+; Konfigurasi uploader alat Vital Sign.
+; Salin file ini menjadi config.ini lalu sesuaikan nilainya.
+
+[server]
+; Alamat server website (tanpa garis miring di akhir)
+server_url = http://192.168.1.10:3000
+
+; API key harus sama dengan DEVICE_API_KEY di server
+api_key = ubah-api-key-ini
+
+; Waktu tunggu (detik) dan percobaan ulang
+timeout = 30
+retries = 3
+
+; Set false bila server memakai sertifikat self-signed (HTTPS lokal)
+verify_ssl = true

@@ -1,0 +1,31 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# next.js
+/.next/
+/out/
+next-env.d.ts
+
+# production
+/build
+
+# runtime data (database + file CSV hasil upload)
+/data
+
+# env
+.env
+.env*.local
+
+# konfigurasi alat (berisi API key)
+examples/device/config.ini
+
+# misc
+.DS_Store
+*.pem
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.vercel
+*.tsbuildinfo
