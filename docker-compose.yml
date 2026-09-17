@@ -24,5 +24,16 @@ services:
       retries: 3
       start_period: 30s
 
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: posyandu-cloudflared
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      web:
+        condition: service_healthy
+
 volumes:
   posyandu-data:
