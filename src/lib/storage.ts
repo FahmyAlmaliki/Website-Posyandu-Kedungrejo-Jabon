@@ -41,3 +41,11 @@ export function resolveUploadPath(filePath: string): string {
     ? filePath
     : path.join(PROJECT_ROOT, filePath);
 }
+
+export async function deleteUploadFile(filePath: string): Promise<void> {
+  try {
+    await fs.unlink(resolveUploadPath(filePath));
+  } catch {
+    // File mungkin sudah tidak ada; abaikan.
+  }
+}

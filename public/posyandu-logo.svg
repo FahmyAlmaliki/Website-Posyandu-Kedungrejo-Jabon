@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="50%" stop-color="#0369a1" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="leafGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#34d399" />
+    </linearGradient>
+    <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <filter id="subtleShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.15" />
+    </filter>
+  </defs>
+
+  <!-- Outer Rounded Shield -->
+  <rect x="4" y="4" width="112" height="112" rx="28" fill="url(#bgGrad)" />
+  <rect x="5" y="5" width="110" height="110" rx="27" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
+
+  <!-- Inner Soft Medical Aura -->
+  <circle cx="60" cy="60" r="44" fill="white" fill-opacity="0.04" />
+  <circle cx="60" cy="60" r="34" fill="white" fill-opacity="0.06" />
+
+  <!-- Caring Embracing Hands / Protective Wings (Symbolizing Posyandu Care) -->
+  <path d="M26 66 C26 84 40 96 60 96 C80 96 94 84 94 66 C94 56 86 48 80 52 C74 56 78 68 76 74 C72 82 48 82 44 74 C42 68 46 56 40 52 C34 48 26 56 26 66 Z" fill="url(#leafGrad)" opacity="0.9" />
+
+  <!-- Mother & Child Silhouette (Posyandu Core Identity) -->
+  <!-- Mother Figure -->
+  <circle cx="50" cy="40" r="8" fill="#ffffff" filter="url(#subtleShadow)" />
+  <path d="M40 64 C40 50 60 50 60 64 C60 70 40 70 40 64 Z" fill="#ffffff" filter="url(#subtleShadow)" />
+
+  <!-- Baby / Child Figure in Embrace -->
+  <circle cx="68" cy="48" r="6" fill="#38bdf8" />
+  <path d="M62 66 C62 56 74 56 74 66 C74 71 62 71 62 66 Z" fill="#38bdf8" />
+
+  <!-- Vital Sign Pulse Line Integration (Symbolizing Vital Sign Technology) -->
+  <path d="M30 84 L46 84 L50 78 L54 88 L58 80 L62 86 L66 84 L90 84" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- Small Cross Accent at Top Right -->
+  <path d="M84 28 H92 M88 24 V32" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" />
+</svg>
