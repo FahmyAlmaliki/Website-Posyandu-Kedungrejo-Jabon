@@ -100,7 +100,12 @@ Contoh:
 
 ## Integrasi ke Program Python Alat
 
-Contoh lengkap tersedia di folder [`examples/device`](../examples/device):
+Contoh lengkap tersedia terpisah per alat:
+
+- [`examples/vital-sign`](../examples/vital-sign) — untuk alat Vital Sign.
+- [`examples/timbangan-bayi`](../examples/timbangan-bayi) — untuk alat Timbangan Bayi.
+
+Masing-masing folder berisi:
 
 - `uploader.py` — modul `Uploader.upload_csv()` siap impor.
 - `example_upload.py` — contoh pemakaian dari command line.
@@ -109,8 +114,9 @@ Contoh lengkap tersedia di folder [`examples/device`](../examples/device):
 
 ### Langkah singkat
 
-1. Salin folder `examples/device` ke alat, lalu salin
-   `config.ini.example` menjadi `config.ini` dan isi `server_url` + `api_key`.
+1. Salin folder contoh sesuai alat (`examples/vital-sign` atau
+   `examples/timbangan-bayi`) ke perangkat, lalu salin `config.ini.example`
+   menjadi `config.ini` dan isi `server_url` + `api_key`.
 2. Pasang dependensi:
 
    ```bash
@@ -136,13 +142,15 @@ Contoh lengkap tersedia di folder [`examples/device`](../examples/device):
            return False
    ```
 
-Untuk alat Timbangan Bayi, tambahkan `device_type="baby_scale"`:
+Pada folder `examples/timbangan-bayi`, `upload_csv()` otomatis memakai
+`device_type="baby_scale"`. Bila memakai satu program untuk kedua alat, kirim
+parameter berikut secara eksplisit:
 
 ```python
 hasil = uploader.upload_csv(
     csv_path,
     title="Data Timbangan Bayi 16 September 2026",
-    device_type="baby_scale",
+    device_type="baby_scale",  # gunakan "vital_sign" untuk alat Vital Sign
 )
 ```
 

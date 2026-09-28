@@ -19,7 +19,8 @@ next-env.d.ts
 .env*.local
 
 # konfigurasi alat (berisi API key)
-examples/device/config.ini
+examples/vital-sign/config.ini
+examples/timbangan-bayi/config.ini
 
 # misc
 .DS_Store

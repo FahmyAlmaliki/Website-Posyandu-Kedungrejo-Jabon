@@ -73,7 +73,7 @@ Contoh alat Timbangan Bayi:
         <p className="mt-2 text-[11px] text-slate-500">
           Dokumentasi dan skrip integrasi Python tersedia pada direktori{" "}
           <code className="rounded bg-white px-1.5 py-0.5 font-mono text-sky-700 border border-slate-200">
-            examples/device
+            examples/
           </code>
           .
         </p>

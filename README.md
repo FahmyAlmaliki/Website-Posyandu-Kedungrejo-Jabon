@@ -1,19 +1,20 @@
 # Website Posyandu Kedungrejo Jabon
 
-Website untuk menampilkan data hasil pengukuran **Vital Sign** Posyandu
-Kedungrejo Jabon. Setiap file CSV yang diunggah menjadi satu **kartu** di
-halaman utama; klik kartu untuk melihat tabel data dan mencari nama balita.
+Website untuk menampilkan data hasil pengukuran **Vital Sign** dan **Timbangan
+Bayi** Posyandu Kedungrejo Jabon. Setiap file yang diunggah menjadi satu
+**kartu** di halaman utama; klik kartu untuk melihat tabel data dan mencari
+nama balita.
 
 Dibangun dengan **Next.js 15**, **Prisma + SQLite**, **Tailwind CSS**, dan
 dijalankan sepenuhnya dengan **Docker**.
 
 ## Fitur
 
-- Halaman utama berisi kartu per upload (judul, tanggal, sumber, jumlah data).
-- Halaman detail: tabel data, pencarian nama, filter gender/kategori, urut data,
-  dan export CSV.
-- Upload CSV manual oleh admin melalui halaman web.
-- API untuk alat Vital Sign mengirim CSV otomatis (header `X-API-Key`).
+- Halaman utama berisi kartu per upload (judul, tanggal, jenis alat, jumlah data).
+- Halaman detail: tabel data sesuai jenis alat, pencarian nama, filter, dan export CSV.
+- Upload CSV/Excel manual oleh admin melalui halaman web (pilih jenis alat).
+- API untuk alat Vital Sign & Timbangan Bayi mengirim berkas otomatis
+  (header `X-API-Key`, field `device_type`).
 - Login admin untuk proteksi halaman upload.
 - Tema biru muda / putih / biru tua (nuansa langit dan awan).
 
@@ -77,8 +78,10 @@ curl -X POST "http://SERVER:3000/api/v1/measurements/upload" \
   -F "title=Data Vital Sign 16 September 2026"
 ```
 
-Program contoh Python untuk alat ada di [`examples/device`](examples/device),
-dan dokumentasi lengkap ada di [`docs/API.md`](docs/API.md).
+Program contoh Python untuk alat tersedia terpisah di
+[`examples/vital-sign`](examples/vital-sign) dan
+[`examples/timbangan-bayi`](examples/timbangan-bayi), dengan dokumentasi lengkap
+di [`docs/API.md`](docs/API.md).
 
 ## Struktur Proyek
 
@@ -89,7 +92,8 @@ src/app/                    Halaman & API routes Next.js
 src/components/             Komponen UI (kartu, tabel, navbar)
 src/lib/                    Prisma, parser CSV, API key, auth, storage
 docs/API.md                 Dokumentasi API
-examples/device/            Program contoh Python untuk alat
+examples/vital-sign/        Program contoh Python alat Vital Sign
+examples/timbangan-bayi/    Program contoh Python alat Timbangan Bayi
 docker/entrypoint.sh        Migrasi + seed otomatis saat container start
 Dockerfile / docker-compose.yml
 hasil_pengukuran.csv        Contoh data (diimpor otomatis saat pertama jalan)
