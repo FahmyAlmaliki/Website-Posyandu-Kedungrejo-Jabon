@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { MeasurementTable } from "@/components/measurement-table";
+import { BabyMeasurementTable } from "@/components/baby-measurement-table";
 import { DeleteBatchButton } from "@/components/delete-batch-button";
 import { formatIndonesianDateTime } from "@/lib/format";
+import { DEVICE_LABELS, normalizeDeviceType } from "@/lib/device";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +32,10 @@ export default async function BatchDetailPage({
     auth(),
     prisma.batch.findUnique({
       where: { id },
-      include: { measurements: { orderBy: { nama: "asc" } } },
+      include: {
+        measurements: { orderBy: { nama: "asc" } },
+        babyMeasurements: { orderBy: { nama: "asc" } },
+      },
     }),
   ]);
 
@@ -39,6 +44,8 @@ export default async function BatchDetailPage({
   }
 
   const isAdmin = Boolean(session?.user);
+  const deviceType = normalizeDeviceType(batch.deviceType);
+  const isBabyScale = deviceType === "BABY_SCALE";
   const sourceInfo = SOURCE_LABEL[batch.source] ?? {
     label: batch.source,
     badgeClass: "bg-slate-100 text-slate-700 ring-1 ring-slate-200",
@@ -70,6 +77,15 @@ export default async function BatchDetailPage({
             <div className="flex flex-wrap items-center gap-2">
               <span className={`badge ${sourceInfo.badgeClass}`}>
                 {sourceInfo.label}
+              </span>
+              <span
+                className={`badge ${
+                  isBabyScale
+                    ? "bg-amber-50 text-amber-700 ring-1 ring-amber-200/60"
+                    : "bg-violet-50 text-violet-700 ring-1 ring-violet-200/60"
+                }`}
+              >
+                {DEVICE_LABELS[deviceType]}
               </span>
               <span className="font-mono text-[11px] text-slate-400">
                 ID: {batch.id}
@@ -108,11 +124,19 @@ export default async function BatchDetailPage({
       </section>
 
       {/* Measurement Table Component */}
-      <MeasurementTable
-        rows={batch.measurements}
-        batchTitle={batch.title}
-        batchId={batch.id}
-      />
+      {isBabyScale ? (
+        <BabyMeasurementTable
+          rows={batch.babyMeasurements}
+          batchTitle={batch.title}
+          batchId={batch.id}
+        />
+      ) : (
+        <MeasurementTable
+          rows={batch.measurements}
+          batchTitle={batch.title}
+          batchId={batch.id}
+        />
+      )}
     </div>
   );
 }

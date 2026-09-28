@@ -1,0 +1,4 @@
+session_id,nama,tanggal_lahir,jenis_kelamin,usia_bulan,berat_kg,panjang_cm,standar,status_pb_u,status_bb_u,status_bb_pb,status_keseluruhan
+20260912_040533,Abrisam,06-07-2026,Laki-laki,2.2,5.615,62.5,WHO Child Growth Standards (baring),z = 1.7 — Normal,z = -0.2 — Berat badan normal,z = -2.1 — Kurus (wasted),waspada
+20260912_041102,Salsabila,14-05-2026,Perempuan,4.0,6.480,64.2,WHO Child Growth Standards (baring),z = 0.8 — Normal,z = 0.1 — Berat badan normal,z = 0.3 — Normal,waspada
+20260912_041530,Muhammad Rizki,02-02-2026,Laki-laki,7.3,7.950,67.9,WHO Child Growth Standards (baring),z = -0.6 — Normal,z = -0.4 — Berat badan normal,z = -0.2 — Normal,normal

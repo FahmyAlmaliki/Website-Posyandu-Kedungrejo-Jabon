@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Batch } from "@prisma/client";
 import { formatIndonesianDateTime } from "@/lib/format";
+import { DEVICE_SHORT_LABELS, normalizeDeviceType } from "@/lib/device";
 import { DeleteBatchButton } from "@/components/delete-batch-button";
 
 const SOURCE_CONFIG: Record<
@@ -25,11 +26,18 @@ interface BatchCardProps {
 }
 
 export function BatchCard({ batch, isAdmin = false }: BatchCardProps) {
+  const deviceType = normalizeDeviceType(batch.deviceType);
+  const isBabyScale = deviceType === "BABY_SCALE";
   const sourceInfo = SOURCE_CONFIG[batch.source] ?? {
     label: batch.source,
     badgeClass: "bg-slate-100 text-slate-700 ring-1 ring-slate-200",
     iconType: "web",
   };
+
+  const badgeClass = isBabyScale
+    ? "bg-amber-50 text-amber-700 ring-1 ring-amber-200/60"
+    : sourceInfo.badgeClass;
+  const badgeLabel = DEVICE_SHORT_LABELS[deviceType];
 
   return (
     <div className="group relative flex flex-col justify-between db-card p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-sky-300 hover:shadow-md">
@@ -38,27 +46,32 @@ export function BatchCard({ batch, isAdmin = false }: BatchCardProps) {
           <div className="flex items-center gap-2">
             <span
               className={`flex h-8 w-8 items-center justify-center rounded-lg ring-1 ${
-                sourceInfo.iconType === "device"
-                  ? "bg-teal-50 text-teal-700 ring-teal-200/70"
-                  : "bg-indigo-50 text-indigo-700 ring-indigo-200/70"
+                isBabyScale
+                  ? "bg-amber-50 text-amber-700 ring-amber-200/70"
+                  : sourceInfo.iconType === "device"
+                    ? "bg-teal-50 text-teal-700 ring-teal-200/70"
+                    : "bg-indigo-50 text-indigo-700 ring-indigo-200/70"
               }`}
               aria-hidden
             >
-              {sourceInfo.iconType === "device" ? (
+              {isBabyScale ? (
+                /* Baby Scale SVG */
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                </svg>
+              ) : sourceInfo.iconType === "device" ? (
                 /* Medical Stethoscope / Device SVG */
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                 </svg>
               ) : (
-                /* File Document CSV SVG */
+                /* File Document SVG */
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               )}
             </span>
-            <span className={`badge ${sourceInfo.badgeClass}`}>
-              {sourceInfo.label}
-            </span>
+            <span className={`badge ${badgeClass}`}>{badgeLabel}</span>
           </div>
 
           {isAdmin && (

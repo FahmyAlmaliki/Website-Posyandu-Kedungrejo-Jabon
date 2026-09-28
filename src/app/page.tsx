@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { BatchListView } from "@/components/batch-list-view";
 import { formatIndonesianDateTime } from "@/lib/format";
+import { normalizeDeviceType } from "@/lib/device";
 
 export const dynamic = "force-dynamic";
 
@@ -19,8 +20,12 @@ export default async function HomePage() {
     0,
   );
 
-  const deviceBatches = batches.filter((b) => b.source === "DEVICE").length;
-  const webBatches = batches.filter((b) => b.source === "WEB").length;
+  const vitalBatches = batches.filter(
+    (b) => normalizeDeviceType(b.deviceType) === "VITAL_SIGN",
+  ).length;
+  const babyBatches = batches.filter(
+    (b) => normalizeDeviceType(b.deviceType) === "BABY_SCALE",
+  ).length;
   const latestBatch = batches[0];
 
   return (
@@ -36,11 +41,12 @@ export default async function HomePage() {
               <span className="text-xs text-slate-400">Desa Kedungrejo</span>
             </div>
             <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
-              Basis Data Pengukuran Vital Sign
+              Basis Data Pengukuran Balita
             </h1>
             <p className="mt-1 max-w-2xl text-xs text-slate-500">
-              Registri penyimpanan dan penelusuran hasil pemeriksaan tanda vital
-              balita (Suhu, Detak Jantung, Saturasi Oksigen, Glukosa, dan Antropometri).
+              Registri hasil pemeriksaan tanda vital (Suhu, Detak Jantung, Saturasi
+              Oksigen, Glukosa) dan pengukuran timbangan bayi (Berat, Panjang Badan,
+              Status Gizi WHO).
             </p>
           </div>
 
@@ -50,7 +56,7 @@ export default async function HomePage() {
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                 </svg>
-                <span>Upload Batch CSV</span>
+                <span>Upload Data</span>
               </Link>
             ) : (
               <Link href="/login" className="btn-secondary">
@@ -97,7 +103,7 @@ export default async function HomePage() {
 
           <div className="rounded-lg bg-slate-50/70 p-3.5 border border-slate-100">
             <div className="flex items-center justify-between">
-              <p className="text-[11px] font-medium text-slate-500">Sumber Data</p>
+              <p className="text-[11px] font-medium text-slate-500">Jenis Alat</p>
               <div className="flex h-6 w-6 items-center justify-center rounded-md bg-teal-100 text-teal-700">
                 <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
@@ -105,11 +111,11 @@ export default async function HomePage() {
               </div>
             </div>
             <div className="mt-1 flex items-baseline gap-2">
-              <span className="text-sm font-bold text-teal-700">{deviceBatches} Alat</span>
+              <span className="text-sm font-bold text-violet-700">{vitalBatches} Vital</span>
               <span className="text-xs text-slate-300">/</span>
-              <span className="text-sm font-bold text-indigo-700">{webBatches} Web</span>
+              <span className="text-sm font-bold text-amber-700">{babyBatches} Timbangan</span>
             </div>
-            <p className="text-[10px] text-slate-400 mt-0.5">Metode transmisi</p>
+            <p className="text-[10px] text-slate-400 mt-0.5">Jenis alat pengukuran</p>
           </div>
 
           <div className="rounded-lg bg-slate-50/70 p-3.5 border border-slate-100">
@@ -153,8 +159,9 @@ export default async function HomePage() {
             </div>
             <p className="font-semibold text-slate-800 mt-2">Basis Data Masih Kosong</p>
             <p className="max-w-sm text-xs text-slate-500">
-              Belum ada data pengukuran yang diunggah. Silakan upload file CSV hasil
-              pengukuran atau hubungkan alat Vital Sign via REST API.
+              Belum ada data pengukuran yang diunggah. Silakan upload berkas CSV atau
+              Excel hasil pengukuran, atau hubungkan alat Vital Sign / Timbangan Bayi
+              via REST API.
             </p>
             <Link href="/upload" className="btn-primary mt-3">
               Upload Data Sekarang

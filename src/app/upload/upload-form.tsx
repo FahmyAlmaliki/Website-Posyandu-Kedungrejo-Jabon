@@ -14,6 +14,9 @@ export function UploadForm() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
+  const [deviceType, setDeviceType] = useState<"VITAL_SIGN" | "BABY_SCALE">(
+    "VITAL_SIGN",
+  );
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,12 +25,13 @@ export function UploadForm() {
     setError(null);
 
     if (!file) {
-      setError("Pilih file CSV terlebih dahulu.");
+      setError("Pilih berkas CSV atau Excel terlebih dahulu.");
       return;
     }
 
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("device_type", deviceType);
     if (title.trim()) formData.append("title", title.trim());
 
     setIsUploading(true);
@@ -56,6 +60,61 @@ export function UploadForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
+        <label className="mb-1 block text-xs font-semibold text-slate-800 uppercase tracking-wider">
+          Jenis Alat / Sumber Data
+        </label>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <button
+            type="button"
+            onClick={() => setDeviceType("VITAL_SIGN")}
+            className={`flex items-start gap-3 rounded-xl border p-3 text-left transition ${
+              deviceType === "VITAL_SIGN"
+                ? "border-sky-400 bg-sky-50/70 ring-2 ring-sky-500/20"
+                : "border-slate-200 bg-white hover:border-slate-300"
+            }`}
+          >
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-teal-50 text-teal-700 ring-1 ring-teal-200/70">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+              </svg>
+            </span>
+            <span>
+              <span className="block text-xs font-bold text-slate-900">
+                Alat Vital Sign
+              </span>
+              <span className="mt-0.5 block text-[11px] text-slate-500">
+                Suhu, detak jantung, SpO2, glukosa, antropometri
+              </span>
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setDeviceType("BABY_SCALE")}
+            className={`flex items-start gap-3 rounded-xl border p-3 text-left transition ${
+              deviceType === "BABY_SCALE"
+                ? "border-sky-400 bg-sky-50/70 ring-2 ring-sky-500/20"
+                : "border-slate-200 bg-white hover:border-slate-300"
+            }`}
+          >
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-700 ring-1 ring-amber-200/70">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+              </svg>
+            </span>
+            <span>
+              <span className="block text-xs font-bold text-slate-900">
+                Timbangan Bayi
+              </span>
+              <span className="mt-0.5 block text-[11px] text-slate-500">
+                Berat, panjang badan, dan status gizi (WHO)
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div>
         <label
           htmlFor="title"
           className="mb-1 block text-xs font-semibold text-slate-800 uppercase tracking-wider"
@@ -76,7 +135,7 @@ export function UploadForm() {
 
       <div>
         <label className="mb-1 block text-xs font-semibold text-slate-800 uppercase tracking-wider">
-          Berkas CSV Data Pengukuran
+          Berkas Data Pengukuran (CSV / Excel)
         </label>
         <button
           type="button"
@@ -111,10 +170,10 @@ export function UploadForm() {
           ) : (
             <div className="space-y-1">
               <span className="text-xs font-semibold text-slate-800 block group-hover:text-sky-700 transition">
-                Pilih atau seret berkas CSV ke sini
+                Pilih atau seret berkas CSV / Excel ke sini
               </span>
               <span className="text-[11px] text-slate-400 block">
-                Mendukung file hasil ekspor alat ukur vital sign (berisi kolom nama, session_id, spo2, suhu, dsb.)
+                Mendukung berkas .csv, .xlsx, atau .xls hasil ekspor alat ukur vital sign (berisi kolom nama, session_id, spo2, suhu, dsb.)
               </span>
             </div>
           )}
@@ -122,7 +181,7 @@ export function UploadForm() {
         <input
           ref={fileInputRef}
           type="file"
-          accept=".csv,text/csv"
+          accept=".csv,.xlsx,.xls,.xlsm,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
           className="hidden"
           onChange={(event) => setFile(event.target.files?.[0] ?? null)}
         />

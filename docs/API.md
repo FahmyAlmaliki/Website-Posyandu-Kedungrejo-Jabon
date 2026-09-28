@@ -1,7 +1,7 @@
-# API Upload Data Vital Sign
+# API Upload Data Pengukuran
 
-Dokumen ini menjelaskan cara alat Vital Sign (Python) mengirim hasil pengukuran
-ke website Posyandu Kedungrejo Jabon.
+Dokumen ini menjelaskan cara alat Vital Sign dan alat Timbangan Bayi (Python)
+mengirim hasil pengukuran ke website Posyandu Kedungrejo Jabon.
 
 ## Ringkasan
 
@@ -11,13 +11,16 @@ ke website Posyandu Kedungrejo Jabon.
 | Path | `/api/v1/measurements/upload` |
 | Autentikasi | Header `X-API-Key` |
 | Content-Type | `multipart/form-data` |
-| Field | `file` (wajib, file CSV), `title` (opsional, judul kartu) |
+| Field | `file` (wajib, CSV/Excel), `title` (opsional), `device_type` (opsional) |
+| `device_type` | `vital_sign` (default) atau `baby_scale` |
 | Ukuran maksimal | 10 MB |
 
 Setiap upload akan membuat **satu kartu** di halaman utama. Kartu berisi seluruh
-baris data dari file CSV tersebut.
+baris data dari berkas tersebut, dengan label jenis alat sesuai `device_type`.
 
-## Format CSV
+Format berkas yang didukung: `.csv`, `.xlsx`, `.xls`, `.xlsm`, `.xlsb`, `.ods`.
+
+## Format Data Vital Sign
 
 Baris pertama harus berupa header. Kolom yang dikenali (nama kolom boleh
 bervariasi dengan pemisah `_`):
@@ -26,18 +29,44 @@ bervariasi dengan pemisah `_`):
 session_id,nama,tanggal_lahir,umur_bulan,gender,kategori_tinggi,tinggi_cm,berat_kg,suhu_c,hr_bpm,spo2_pct,fs_redir_hz_terukur,fs_green_hz_terukur,fs_resample_hz,fs_kualitas_ok,durasi_kualitas_ok,n_sample_ppg,glukosa_mgdl,glukosa_status
 ```
 
+## Format Data Timbangan Bayi
+
+```
+session_id,nama,tanggal_lahir,jenis_kelamin,usia_bulan,berat_kg,panjang_cm,standar,status_pb_u,status_bb_u,status_bb_pb,status_keseluruhan
+```
+
+Contoh:
+
+```csv
+session_id,nama,tanggal_lahir,jenis_kelamin,usia_bulan,berat_kg,panjang_cm,standar,status_pb_u,status_bb_u,status_bb_pb,status_keseluruhan
+20260912_040533,Abrisam,06-07-2026,Laki-laki,2.2,5.615,62.5,WHO Child Growth Standards (baring),z = 1.7 — Normal,z = -0.2 — Berat badan normal,z = -2.1 — Kurus (wasted),waspada
+```
+
 - Kolom yang tidak dikenal akan diabaikan.
 - Kolom yang kosong akan disimpan sebagai kosong (`null`).
 - Nilai boolean menerima `TRUE/FALSE`, `1/0`, `ya/tidak`.
 - Tanggal lahir menerima format `dd-mm-yyyy`, `d/m/yyyy`, atau `dd.mm.yyyy`.
+- Teks ber-encoding ganda (mis. `â€"`) otomatis diperbaiki menjadi `—`.
 
 ## Contoh dengan cURL
+
+Alat Vital Sign (default):
 
 ```bash
 curl -X POST "http://SERVER:3000/api/v1/measurements/upload" \
   -H "X-API-Key: API_KEY_ANDA" \
   -F "file=@hasil_pengukuran.csv" \
   -F "title=Data Vital Sign 16 September 2026"
+```
+
+Alat Timbangan Bayi:
+
+```bash
+curl -X POST "http://SERVER:3000/api/v1/measurements/upload" \
+  -H "X-API-Key: API_KEY_ANDA" \
+  -F "file=@hasil_timbangan_bayi.csv" \
+  -F "title=Data Timbangan Bayi 16 September 2026" \
+  -F "device_type=baby_scale"
 ```
 
 ## Respons
@@ -50,7 +79,8 @@ Berhasil (HTTP 201):
   "message": "Data berhasil diunggah.",
   "batchId": "cmu45gqh00000o25jj1g3xgsl",
   "title": "Data Vital Sign 16 September 2026",
-  "recordCount": 13
+  "recordCount": 13,
+  "deviceType": "VITAL_SIGN"
 }
 ```
 
@@ -105,6 +135,16 @@ Contoh lengkap tersedia di folder [`examples/device`](../examples/device):
            print("Upload gagal:", error)
            return False
    ```
+
+Untuk alat Timbangan Bayi, tambahkan `device_type="baby_scale"`:
+
+```python
+hasil = uploader.upload_csv(
+    csv_path,
+    title="Data Timbangan Bayi 16 September 2026",
+    device_type="baby_scale",
+)
+```
 
 `upload_csv()` sudah menangani timeout, percobaan ulang, dan pesan error dari
 server, sehingga cukup menangkap `UploadError` untuk menampilkan notifikasi ke

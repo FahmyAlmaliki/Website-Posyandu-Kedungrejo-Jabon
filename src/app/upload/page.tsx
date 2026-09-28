@@ -22,7 +22,7 @@ export default async function UploadPage() {
           <span>Dashboard Registri</span>
         </Link>
         <span>/</span>
-        <span className="text-slate-800 font-medium">Upload Data CSV</span>
+        <span className="text-slate-800 font-medium">Upload Data</span>
       </nav>
 
       <div>
@@ -36,7 +36,7 @@ export default async function UploadPage() {
           Upload Hasil Pengukuran Vital Sign
         </h1>
         <p className="mt-1 text-xs text-slate-500">
-          Impor file CSV hasil perekaman data dari alat pengukur Vital Sign ke dalam basis data posyandu.
+          Impor berkas CSV atau Excel (.xlsx/.xls) hasil perekaman dari alat Vital Sign maupun Timbangan Bayi ke dalam basis data posyandu.
         </p>
       </div>
 
@@ -63,8 +63,12 @@ export default async function UploadPage() {
 {`POST /api/v1/measurements/upload
 Header: X-API-Key: <DEVICE_API_KEY>
 Content-Type: multipart/form-data
-  - file  : [file_pengukuran.csv]
-  - title : (opsional) Judul sesi pemeriksaan`}
+  - file        : [file_pengukuran.csv / file_pengukuran.xlsx]
+  - title       : (opsional) Judul sesi pemeriksaan
+  - device_type : vital_sign (default) | baby_scale
+
+Contoh alat Timbangan Bayi:
+  - device_type : baby_scale`}
         </pre>
         <p className="mt-2 text-[11px] text-slate-500">
           Dokumentasi dan skrip integrasi Python tersedia pada direktori{" "}

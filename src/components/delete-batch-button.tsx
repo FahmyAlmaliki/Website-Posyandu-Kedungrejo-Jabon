@@ -22,7 +22,7 @@ export function DeleteBatchButton({
 
   async function handleDelete() {
     const confirmed = window.confirm(
-      `Hapus batch "${batchTitle}"?\n\nSeluruh data rekaman dan berkas CSV pada batch ini akan dihapus secara permanen dari database.`,
+      `Hapus batch "${batchTitle}"?\n\nSeluruh data rekaman dan berkas pada batch ini akan dihapus secara permanen dari database.`,
     );
     if (!confirmed) return;
 

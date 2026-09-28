@@ -8,14 +8,16 @@ datasource db {
 }
 
 model Batch {
-  id               String        @id @default(cuid())
+  id               String            @id @default(cuid())
   title            String
-  uploadedAt       DateTime      @default(now())
+  uploadedAt       DateTime          @default(now())
   source           String
+  deviceType       String            @default("VITAL_SIGN")
   originalFilename String
   filePath         String
   recordCount      Int
   measurements     Measurement[]
+  babyMeasurements BabyMeasurement[]
 }
 
 model Measurement {
@@ -42,6 +44,27 @@ model Measurement {
   nSamplePpg        Int?
   glukosaMgdl       Float?
   glukosaStatus     String?
+
+  @@index([batchId])
+}
+
+model BabyMeasurement {
+  id                String  @id @default(cuid())
+  batchId           String
+  batch             Batch   @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  sessionId         String?
+  nama              String?
+  tanggalLahir      String?
+  gender            String?
+  usiaBulan         Float?
+  beratKg           Float?
+  panjangCm         Float?
+  standar           String?
+  statusPbU         String?
+  statusBbU         String?
+  statusBbPb        String?
+  statusKeseluruhan String?
 
   @@index([batchId])
 }

@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyApiKey } from "@/lib/api-key";
-import { createBatchFromCsv } from "@/lib/upload-service";
+import { createBatchFromFile } from "@/lib/upload-service";
+import { normalizeDeviceType } from "@/lib/device";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
 
   if (file.size === 0) {
     return NextResponse.json(
-      { status: "error", message: "File CSV kosong." },
+      { status: "error", message: "Berkas kosong." },
       { status: 400 },
     );
   }
@@ -55,13 +56,19 @@ export async function POST(request: NextRequest) {
   const titleValue = formData.get("title");
   const title = typeof titleValue === "string" ? titleValue : null;
 
+  const deviceTypeValue =
+    formData.get("device_type") ??
+    request.nextUrl.searchParams.get("device_type");
+  const deviceType = normalizeDeviceType(deviceTypeValue);
+
   try {
     const buffer = Buffer.from(await file.arrayBuffer());
-    const batch = await createBatchFromCsv({
+    const batch = await createBatchFromFile({
       buffer,
       filename: file.name || "hasil_pengukuran.csv",
       title,
       source: "DEVICE",
+      deviceType,
     });
 
     return NextResponse.json(
@@ -71,12 +78,13 @@ export async function POST(request: NextRequest) {
         batchId: batch.id,
         title: batch.title,
         recordCount: batch.recordCount,
+        deviceType: batch.deviceType,
       },
       { status: 201 },
     );
   } catch (error) {
     const message =
-      error instanceof Error ? error.message : "Terjadi kesalahan saat memproses CSV.";
+      error instanceof Error ? error.message : "Terjadi kesalahan saat memproses berkas.";
     return NextResponse.json({ status: "error", message }, { status: 400 });
   }
 }

@@ -4,6 +4,11 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import type { Batch } from "@prisma/client";
 import { formatIndonesianDateTime } from "@/lib/format";
+import {
+  DEVICE_SHORT_LABELS,
+  normalizeDeviceType,
+  type DeviceType,
+} from "@/lib/device";
 import { BatchCard } from "@/components/batch-card";
 import { DeleteBatchButton } from "@/components/delete-batch-button";
 
@@ -15,12 +20,17 @@ interface BatchListViewProps {
 export function BatchListView({ batches, isAdmin }: BatchListViewProps) {
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
   const [query, setQuery] = useState("");
-  const [sourceFilter, setSourceFilter] = useState<"ALL" | "DEVICE" | "WEB">("ALL");
+  const [deviceFilter, setDeviceFilter] = useState<"ALL" | DeviceType>("ALL");
 
   const filteredBatches = useMemo(() => {
     const q = query.trim().toLowerCase();
     return batches.filter((b) => {
-      if (sourceFilter !== "ALL" && b.source !== sourceFilter) return false;
+      if (
+        deviceFilter !== "ALL" &&
+        normalizeDeviceType(b.deviceType) !== deviceFilter
+      ) {
+        return false;
+      }
       if (!q) return true;
       return (
         b.title.toLowerCase().includes(q) ||
@@ -28,7 +38,7 @@ export function BatchListView({ batches, isAdmin }: BatchListViewProps) {
         b.id.toLowerCase().includes(q)
       );
     });
-  }, [batches, query, sourceFilter]);
+  }, [batches, query, deviceFilter]);
 
   return (
     <div className="space-y-4">
@@ -54,7 +64,7 @@ export function BatchListView({ batches, isAdmin }: BatchListViewProps) {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Cari judul batch atau file CSV..."
+              placeholder="Cari judul batch atau nama berkas..."
               className="input-db w-full pl-9"
             />
             {query && (
@@ -68,13 +78,13 @@ export function BatchListView({ batches, isAdmin }: BatchListViewProps) {
             )}
           </div>
 
-          {/* Source Tabs */}
+          {/* Device Type Tabs */}
           <div className="inline-flex rounded-lg bg-slate-100 p-0.5 text-xs">
             <button
               type="button"
-              onClick={() => setSourceFilter("ALL")}
+              onClick={() => setDeviceFilter("ALL")}
               className={`rounded-md px-2.5 py-1 font-medium transition ${
-                sourceFilter === "ALL"
+                deviceFilter === "ALL"
                   ? "bg-white text-slate-900 shadow-xs font-semibold"
                   : "text-slate-600 hover:text-slate-900"
               }`}
@@ -83,25 +93,25 @@ export function BatchListView({ batches, isAdmin }: BatchListViewProps) {
             </button>
             <button
               type="button"
-              onClick={() => setSourceFilter("DEVICE")}
+              onClick={() => setDeviceFilter("VITAL_SIGN")}
               className={`rounded-md px-2.5 py-1 font-medium transition ${
-                sourceFilter === "DEVICE"
-                  ? "bg-white text-teal-800 shadow-xs font-semibold"
+                deviceFilter === "VITAL_SIGN"
+                  ? "bg-white text-violet-800 shadow-xs font-semibold"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
-              Alat Vital Sign
+              Vital Sign
             </button>
             <button
               type="button"
-              onClick={() => setSourceFilter("WEB")}
+              onClick={() => setDeviceFilter("BABY_SCALE")}
               className={`rounded-md px-2.5 py-1 font-medium transition ${
-                sourceFilter === "WEB"
-                  ? "bg-white text-indigo-800 shadow-xs font-semibold"
+                deviceFilter === "BABY_SCALE"
+                  ? "bg-white text-amber-800 shadow-xs font-semibold"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
-              Web Upload
+              Timbangan Bayi
             </button>
           </div>
         </div>
@@ -158,14 +168,14 @@ export function BatchListView({ batches, isAdmin }: BatchListViewProps) {
             Tidak ada batch yang cocok
           </p>
           <p className="mt-1 text-xs text-slate-500 max-w-sm">
-            Coba ubah kata kunci pencarian atau ganti filter sumber data di atas.
+            Coba ubah kata kunci pencarian atau ganti filter jenis alat di atas.
           </p>
-          {query && (
+          {(query || deviceFilter !== "ALL") && (
             <button
               type="button"
               onClick={() => {
                 setQuery("");
-                setSourceFilter("ALL");
+                setDeviceFilter("ALL");
               }}
               className="btn-secondary mt-3"
             >
@@ -182,16 +192,17 @@ export function BatchListView({ batches, isAdmin }: BatchListViewProps) {
                 <tr className="border-b border-slate-200 bg-slate-50/80 text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                   <th className="px-4 py-3">No</th>
                   <th className="px-4 py-3">Judul Sesi / Batch</th>
-                  <th className="px-4 py-3">Sumber Data</th>
+                  <th className="px-4 py-3">Jenis Alat</th>
                   <th className="px-4 py-3 text-right">Jumlah Data</th>
                   <th className="px-4 py-3">Waktu Diunggah</th>
-                  <th className="px-4 py-3">Nama File CSV</th>
+                  <th className="px-4 py-3">Nama Berkas</th>
                   <th className="px-4 py-3 text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
                 {filteredBatches.map((batch, index) => {
-                  const isDevice = batch.source === "DEVICE";
+                  const deviceType = normalizeDeviceType(batch.deviceType);
+                  const isBaby = deviceType === "BABY_SCALE";
                   return (
                     <tr
                       key={batch.id}
@@ -214,13 +225,18 @@ export function BatchListView({ batches, isAdmin }: BatchListViewProps) {
                       <td className="px-4 py-3">
                         <span
                           className={`badge ${
-                            isDevice
-                              ? "bg-teal-50 text-teal-700 ring-1 ring-teal-200/70"
-                              : "bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200/70"
+                            isBaby
+                              ? "bg-amber-50 text-amber-700 ring-1 ring-amber-200/70"
+                              : "bg-violet-50 text-violet-700 ring-1 ring-violet-200/70"
                           }`}
                         >
-                          {isDevice ? "Alat Vital Sign" : "Web Upload"}
+                          {DEVICE_SHORT_LABELS[deviceType]}
                         </span>
+                        <div className="mt-0.5 text-[10px] text-slate-400">
+                          {batch.source === "DEVICE"
+                            ? "Kirim alat"
+                            : "Upload web"}
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-right">
                         <span className="font-bold text-slate-900 tabular-nums">

@@ -75,12 +75,15 @@ class Uploader:
         self,
         csv_path: Path | str,
         title: Optional[str] = None,
+        device_type: Optional[str] = None,
     ) -> dict[str, Any]:
         """Kirim satu file CSV ke server.
 
         Args:
             csv_path: lokasi file CSV hasil pengukuran.
             title: judul kartu (opsional). Bila kosong, server membuat otomatis.
+            device_type: ``"vital_sign"`` (default) atau ``"baby_scale"`` untuk
+                alat Timbangan Bayi.
 
         Returns:
             dict respons server, mis. ``{"status": "ok", "batchId": ..., "recordCount": 13}``.
@@ -98,7 +101,11 @@ class Uploader:
 
         endpoint = f"{self.server_url}{UPLOAD_PATH}"
         headers = {"X-API-Key": self.api_key}
-        data = {"title": title} if title else {}
+        data: dict[str, str] = {}
+        if title:
+            data["title"] = title
+        if device_type:
+            data["device_type"] = device_type
 
         last_error: Optional[UploadError] = None
 

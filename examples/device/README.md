@@ -12,6 +12,8 @@ pengukuran ke website Posyandu melalui API.
 | `gui_button_example.py` | Contoh tombol Upload dengan tampilan tkinter |
 | `config.ini.example` | Template konfigurasi, salin menjadi `config.ini` |
 | `requirements.txt` | Dependensi Python |
+| `hasil_pengukuran.csv` | Contoh berkas alat Vital Sign |
+| `hasil_timbangan_bayi.csv` | Contoh berkas alat Timbangan Bayi |
 
 ## Cara Pakai
 
